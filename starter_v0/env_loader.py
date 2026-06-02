@@ -21,9 +21,17 @@ def load_dotenv(path: Path, *, override: bool = True) -> None:
 def _load_streamlit_secrets() -> None:
     try:
         import streamlit as st
-        for key, value in st.secrets.items():
-            if key not in os.environ:
-                os.environ[key] = str(value)
+        secrets_file = Path(__file__).parent / ".streamlit" / "secrets.toml"
+        if secrets_file.exists():
+            for raw_line in secrets_file.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip("\"'")
+                if key and key not in os.environ:
+                    os.environ[key] = value
     except Exception:
         pass
 

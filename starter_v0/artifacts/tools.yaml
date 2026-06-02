@@ -9,7 +9,7 @@
 tools:
   # ---------------- Core tools ----------------
   - name: clarify
-    description: "Gửi một câu hỏi cho người dùng."
+    description: "Ask the user a question and wait for their response. Use when: (1) required info is missing (no account name, no URL), (2) before any send/publish action to confirm. Use response_type='yes_no' for confirmation, response_type='text' for open questions."
     parameters:
       type: object
       properties:
@@ -19,7 +19,7 @@ tools:
       required: [question]
 
   - name: timeline
-    description: "Lấy các bài đăng gần đây."
+    description: "Get recent posts from a specific Twitter/X account. Requires the account's screen name (handle). If user doesn't specify whose tweets, call clarify first."
     parameters:
       type: object
       properties:
@@ -28,7 +28,7 @@ tools:
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: "Search Twitter/X posts by keyword. Use the user's exact keywords for query. Use search_type='Top' for popular posts, 'Latest' for recent posts."
     parameters:
       type: object
       properties:
@@ -38,7 +38,7 @@ tools:
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: "Search the web for information. Use topic='news' for current events. Use the user's exact keywords for query - do NOT expand or translate."
     parameters:
       type: object
       properties:
@@ -49,7 +49,7 @@ tools:
       required: [query]
 
   - name: fetch
-    description: "Lấy nội dung từ một địa chỉ."
+    description: "Read and extract content from a specific URL. Only use when the user provides an exact URL. If no URL is given, call clarify to ask for it."
     parameters:
       type: object
       properties:
@@ -79,7 +79,7 @@ tools:
 
   # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi một đoạn văn bản đi."
+    description: "Send text to a channel. ONLY call this tool AFTER the user has explicitly confirmed. NEVER call directly without confirmation."
     parameters:
       type: object
       properties:
@@ -116,3 +116,45 @@ tools:
         max_pages: {type: integer, default: 5, description: "Số trang"}
         max_chars: {type: integer, default: 8000, description: "Số ký tự"}
       required: [arxiv_url]
+
+  # ---------------- New tool ----------------
+  - name: summarize
+    description: "Summarize provided text by extracting key sentences. Use when the user pastes or provides text directly and asks to summarize. Do NOT use for URLs (use fetch) or for topics (use lookup)."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, default: "", description: "The text to summarize"}
+        max_sentences: {type: integer, default: 3, description: "Maximum number of sentences to extract"}
+      required: [text]
+
+  - name: calculator
+    description: "Evaluate math expressions safely. Supports +, -, *, /, **, sqrt, sin, cos, tan, log, abs, round. Use when the user asks to calculate or solve a math expression."
+    parameters:
+      type: object
+      properties:
+        expression: {type: string, default: "", description: "Math expression to evaluate, e.g. '2**10', 'sqrt(144)', '3.14 * 2'"}
+      required: [expression]
+
+  - name: text_stats
+    description: "Analyze text and return statistics: word count, character count, sentence count, paragraph count, and estimated reading time. Use when the user asks 'bao nhiêu từ', 'thống kê văn bản', 'reading time', etc."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, default: "", description: "The text to analyze"}
+      required: [text]
+
+  - name: datetime_info
+    description: "Get current date, time, day of week. Use when the user asks 'hôm nay là ngày mấy', 'mấy giờ rồi', 'ngày tháng năm', or needs current date/time context."
+    parameters:
+      type: object
+      properties:
+        timezone_offset: {type: integer, default: 7, description: "UTC offset in hours (default 7 for Vietnam)"}
+
+  - name: json_format
+    description: "Parse, validate, and format JSON strings. Returns formatted JSON, validity status, top-level keys. Use when the user provides JSON and asks to format, validate, or check it."
+    parameters:
+      type: object
+      properties:
+        json_string: {type: string, default: "", description: "The JSON string to parse and format"}
+        indent: {type: integer, default: 2, description: "Indentation spaces for formatting"}
+      required: [json_string]

@@ -3,5 +3,211 @@
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_summarize_text",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tóm tắt đoạn văn bản này cho mình: Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to natural intelligence displayed by animals including humans. AI research has been defined as the field of study of intelligent agents. Leading AI textbooks define the field as the study of intelligent agents. John McCarthy coined the term artificial intelligence in 1956.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "summarize",
+            "args": {
+              "text": "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to natural intelligence displayed by animals including humans. AI research has been defined as the field of study of intelligent agents. Leading AI textbooks define the field as the study of intelligent agents. John McCarthy coined the term artificial intelligence in 1956."
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_summarize_text",
+        "difficulty": "easy",
+        "what_it_tests": "User provides text directly and asks to summarize → use summarize tool, not lookup or fetch."
+      }
+    },
+    {
+      "id": "G02_summarize_max_sentences",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tóm tắt 2 câu đầu tiên của đoạn này: Machine learning is a subset of artificial intelligence. It focuses on building systems that learn from data. Deep learning is a subset of machine learning. Neural networks are the foundation of deep learning. These technologies are transforming many industries.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "summarize",
+            "args": {
+              "max_sentences": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "arg_max_sentences",
+        "difficulty": "medium",
+        "what_it_tests": "Extract max_sentences=2 from '2 câu đầu tiên' when summarizing text."
+      }
+    },
+    {
+      "id": "G03_fetch_not_summarize_for_url",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tóm tắt nội dung bài viết tại https://en.wikipedia.org/wiki/Artificial_intelligence",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://en.wikipedia.org/wiki/Artificial_intelligence"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_fetch_not_summarize",
+        "difficulty": "medium",
+        "what_it_tests": "User asks to summarize a URL → use fetch to read URL first, NOT summarize (which needs text input)."
+      }
+    },
+    {
+      "id": "G04_lookup_not_summarize_for_topic",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tóm tắt tình hình AI gần đây",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_lookup_not_summarize",
+        "difficulty": "medium",
+        "what_it_tests": "User asks to summarize a topic (not provided text) → use lookup to search, NOT summarize."
+      }
+    },
+    {
+      "id": "G05_summarize_empty_text_clarify",
+      "phase": "B",
+      "suite": "group",
+      "query": "Giúp mình tóm tắt văn bản",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "clarify_missing_text",
+        "difficulty": "easy",
+        "what_it_tests": "User asks to summarize but provides NO text → call clarify to ask for the text content."
+      }
+    },
+    {
+      "id": "G06_calculator_basic",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tính giúp mình: 2 mũ 10 cộng căn bậc hai của 144",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "calculator",
+            "args": {
+              "expression": "2**10 + sqrt(144)"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_calculator",
+        "difficulty": "easy",
+        "what_it_tests": "User asks to calculate a math expression → use calculator tool."
+      }
+    },
+    {
+      "id": "G07_text_stats",
+      "phase": "B",
+      "suite": "group",
+      "query": "Đoạn văn bản này có bao nhiêu từ và mất bao lâu để đọc: Artificial intelligence is transforming the world. Machine learning enables computers to learn from data without being explicitly programmed.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "text_stats"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_text_stats",
+        "difficulty": "easy",
+        "what_it_tests": "User asks 'bao nhiêu từ' and 'mất bao lâu để đọc' → use text_stats tool."
+      }
+    },
+    {
+      "id": "G08_datetime_info",
+      "phase": "B",
+      "suite": "group",
+      "query": "Hôm nay là ngày mấy và thứ mấy?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "datetime_info"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_datetime",
+        "difficulty": "easy",
+        "what_it_tests": "User asks 'hôm nay là ngày mấy' → use datetime_info tool, not lookup."
+      }
+    },
+    {
+      "id": "G09_json_format",
+      "phase": "B",
+      "suite": "group",
+      "query": "Format lại JSON này cho đẹp: {\"name\":\"AI\",\"version\":2,\"tags\":[\"ml\",\"deep-learning\"]}",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "json_format"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_json_format",
+        "difficulty": "easy",
+        "what_it_tests": "User provides JSON and asks to format → use json_format tool."
+      }
+    },
+    {
+      "id": "G10_calculator_no_tool_for_explanation",
+      "phase": "B",
+      "suite": "group",
+      "query": "Giải thích phương trình E=mc2 là gì?",
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "metadata": {
+        "skill": "no_tool_explanation",
+        "difficulty": "easy",
+        "what_it_tests": "User asks for explanation of a formula (not calculation) → answer directly, do NOT call calculator."
+      }
+    }
+  ]
 }

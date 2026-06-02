@@ -17,6 +17,11 @@ from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
+from .summarize.tool import summarize_text
+from .calculator.tool import calculate
+from .text_stats.tool import text_statistics
+from .datetime_info.tool import get_datetime_info
+from .json_format.tool import format_json
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -35,6 +40,11 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
+    "summarize": summarize_text,
+    "calculator": calculate,
+    "text_stats": text_statistics,
+    "datetime_info": get_datetime_info,
+    "json_format": format_json,
 }
 
 

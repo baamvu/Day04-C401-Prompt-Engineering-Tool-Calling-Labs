@@ -18,9 +18,20 @@ def load_dotenv(path: Path, *, override: bool = True) -> None:
             os.environ[key] = value
 
 
+def _load_streamlit_secrets() -> None:
+    try:
+        import streamlit as st
+        for key, value in st.secrets.items():
+            if key not in os.environ:
+                os.environ[key] = str(value)
+    except Exception:
+        pass
+
+
 def load_lab_env(root: Path) -> None:
     external_path = os.getenv("DAY04_ENV_FILE")
     if external_path:
         load_dotenv(Path(external_path).expanduser())
         return
     load_dotenv(root / ".env")
+    _load_streamlit_secrets()

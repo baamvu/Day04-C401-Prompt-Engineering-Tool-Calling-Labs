@@ -29,6 +29,26 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
+    st.divider()
+    st.header("🛠️ Available Tools")
+    st.markdown("""
+    **No API key needed:**
+    - 📝 `summarize` — Tóm tắt văn bản
+    - 🔢 `calculator` — Tính toán toán học
+    - 📊 `text_stats` — Thống kê văn bản
+    - 🕐 `datetime_info` — Ngày giờ hiện tại
+    - 📋 `json_format` — Parse/format JSON
+    - 📚 `papers` — Tìm paper arXiv
+    - 📄 `paper_text` — Đọc paper arXiv
+
+    **Need API key:**
+    - 🐦 `timeline` — Tweet theo user
+    - 🔍 `social_search` — Tìm tweet theo keyword
+    - 🌐 `lookup` — Tìm kiếm web
+    - 🔗 `fetch` — Đọc URL
+    - 📤 `send` — Gửi Telegram
+    """)
+
 # ── Init agent ──
 @st.cache_resource
 def init_agent(provider_name: str, version: str):
